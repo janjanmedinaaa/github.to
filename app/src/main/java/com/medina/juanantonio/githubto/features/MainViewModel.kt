@@ -17,7 +17,7 @@ class MainViewModel(
     val refreshUser = MutableLiveData<Pair<User, Int>>()
     val showLoadingSpinner = MutableLiveData(false)
     var userList = arrayListOf<User>()
-    var requestOnGoing = false
+    private var requestOnGoing = false
 
     suspend fun getInitialUserList() {
         val currentUserList = databaseManager.getUserList().toArrayList()
