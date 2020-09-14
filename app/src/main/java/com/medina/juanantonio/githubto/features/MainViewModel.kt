@@ -17,6 +17,7 @@ class MainViewModel(
     val refreshUser = MutableLiveData<Pair<User, Int>>()
     val showLoadingSpinner = MutableLiveData(false)
     var userList = arrayListOf<User>()
+    var requestOnGoing = false
 
     suspend fun getInitialUserList() {
         val currentUserList = databaseManager.getUserList().toArrayList()
@@ -29,18 +30,24 @@ class MainViewModel(
     }
 
     suspend fun getNewUsers() {
+        if (requestOnGoing) return
+        requestOnGoing = true
+
         showLoadingSpinner.value = true
         val currentLastId = if (userList.isEmpty()) 0 else userList.last().id
         val userListResult = networkManager.getUsers(since = currentLastId)
 
         if (userListResult is Result.Success) {
             val newUserList = userListResult.data
-            this.newUserList.value = newUserList?.toArrayList()
-
             userList.addAll(newUserList ?: listOf())
             databaseManager.addUsers(newUserList ?: listOf())
+
+            showLoadingSpinner.value = false
+            this.newUserList.value = newUserList?.toArrayList()
+        } else {
+            showLoadingSpinner.value = false
         }
-        showLoadingSpinner.value = false
+        requestOnGoing = false
     }
 
     suspend fun refreshUserItem(position: Int) {

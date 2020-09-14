@@ -2,9 +2,10 @@ package com.medina.juanantonio.githubto.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.medina.juanantonio.githubto.features.UserListItem
 
 @Entity
-class User {
+class User : UserListItem {
 
     @PrimaryKey
     var id: Int = 0

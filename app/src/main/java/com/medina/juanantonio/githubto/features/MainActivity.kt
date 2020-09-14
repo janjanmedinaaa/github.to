@@ -74,7 +74,14 @@ class MainActivity : BaseActivity() {
         })
 
         viewModel.showLoadingSpinner.observe(this, Observer {
-            binding.showLoadingSpinner = it
+            userListAdapter.run {
+                if (it) {
+                    addLoading()
+                    binding.recyclerviewUsers.smoothScrollToPosition(
+                        viewModel.userList.size + 1
+                    )
+                } else removeLoading()
+            }
         })
 
         viewModel.viewModelScope.launch {
